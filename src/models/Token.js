@@ -6,8 +6,9 @@ export const Token = client.define('token', {
   refreshToken: {
     type: DataTypes.STRING,
     allowNull: false,
+    unique: true,
   },
 });
 
-Token.belongsTo(User);
-User.hasOne(Token);
+Token.belongsTo(User, { foreignKey: 'userId', onDelete: 'CASCADE' });
+User.hasOne(Token, { foreignKey: 'userId' });

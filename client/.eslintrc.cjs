@@ -9,7 +9,7 @@ module.exports = {
         'plugin:cypress/recommended',
     ],
     parserOptions: {
-        ecmaVersion: "2024",
+        ecmaVersion: 2024,
         sourceType: "module",
     },
     overrides: [
@@ -50,7 +50,7 @@ module.exports = {
             {blankLine: 'always', prev: 'directive', next: '*'},
             {blankLine: 'always', prev: 'block-like', next: '*'},
         ],
-        'implicit-arrow-linebreak:': 0,
+        'implicit-arrow-linebreak': 0,
 
         // React
         'react/prop-types': 0,

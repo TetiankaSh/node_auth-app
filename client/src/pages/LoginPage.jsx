@@ -4,6 +4,7 @@ import { Formik, Form, Field } from 'formik';
 import cn from 'classnames';
 
 import { AuthContext } from '../components/AuthContext.jsx';
+import { Loader } from '../components/Loader.jsx';
 import { usePageError } from '../hooks/usePageError.js';
 
 function validateEmail(value) {
@@ -33,7 +34,15 @@ export const LoginPage = () => {
   const location = useLocation();
 
   const [error, setError] = usePageError('');
-  const { login } = useContext(AuthContext);
+  const { user, login } = useContext(AuthContext);
+
+  if (isChecked && user) {
+    return <Navigate to="/" replace />
+  }
+
+  if (!isChecked) {
+    return <Loader />
+  }
 
   return (
     <>
@@ -46,7 +55,7 @@ export const LoginPage = () => {
         onSubmit={({ email, password }) => {
           return login({ email, password })
             .then(() => {
-              navigate(location.state?.from?.pathname || '/');
+              navigate(location.state?.from?.pathname || '/profile');
             })
             .catch(error => {
               if (error.response?.status === 403) {

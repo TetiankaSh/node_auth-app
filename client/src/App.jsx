@@ -17,6 +17,7 @@ import { ProfilePage } from './pages/ProfilePage.jsx';
 import { EmailConfirmPage } from './pages/EmailConfirmationPage.jsx';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage.jsx';
 import { ResetPasswordPage } from './pages/ResetPasswordPage.jsx';
+import { RequireNonAuth } from './components/RequireNonAuth.jsx';
 
 function App() {
   const navigate = useNavigate();
@@ -63,7 +64,7 @@ function App() {
                   onClick={() => {
                     logout()
                       .then(() => {
-                        navigate('/');
+                        navigate('/login');
                       })
                       .catch(error => {
                         setError(error.response?.data?.message);
@@ -98,24 +99,55 @@ function App() {
         <section className="section">
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="registration" element={<RegistrationPage />} />
+            <Route path="registration" element={
+              <RequireNonAuth>
+                <RegistrationPage />
+              </RequireNonAuth>
+            } />
             <Route
               path="activate/:activationToken"
               element={<AccountActivationPage />}
             />
             <Route
               path="confirm-email-change/:activationToken"
-              element={<EmailConfirmPage />}
+              element={
+                <RequireNonAuth>
+                  <EmailConfirmPage />
+                </RequireNonAuth>
+              }
             />
-            <Route path="login" element={<LoginPage />} />
-            <Route path="forgot-password" element={<ForgotPasswordPage />} />
-            <Route path="reset-password/:activationToken" element={<ResetPasswordPage />} />
+            <Route path="login" element={
+              <RequireNonAuth>
+                <LoginPage />
+              </RequireNonAuth>
+            } />
+            <Route path="forgot-password" element={
+              <RequireNonAuth>
+                <ForgotPasswordPage />
+              </RequireNonAuth>
+            } />
+            <Route path="reset-password/:activationToken" element={
+              <RequireNonAuth>
+                <ResetPasswordPage />
+              </RequireNonAuth>
+            } />
             <Route path="/" element={<RequireAuth />}>
               <Route path="users" element={<UsersPage />} />
             </Route>
             <Route path="/" element={<RequireAuth />}>
               <Route path="profile" element={<ProfilePage />} />
             </Route>
+
+            <Route
+              path="*"
+              element={
+                <section className="section">
+                  <h1 className="title">Page not found</h1>
+                  <p>Sorry, we couldn't find the page you're looking for.</p>
+                  <a href="/" className="button is-link mt-4">Go Home</a>
+                </section>
+              }
+            />
           </Routes>
         </section>
 

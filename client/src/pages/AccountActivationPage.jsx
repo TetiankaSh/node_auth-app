@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { AuthContext } from '../components/AuthContext.jsx';
 import { Loader } from '../components/Loader.jsx';
@@ -8,14 +8,30 @@ export const AccountActivationPage = () => {
   const [error, setError] = useState('');
   const [done, setDone] = useState(false);
 
-  const { activate, logout } = useContext(AuthContext);
+  const { user, isChecked, activate, logout } = useContext(AuthContext);
   const { activationToken } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
+    if (!activationToken) {
+      setResult('Invalid or missing confirmation link.');
+      return;
+    }
+
+    if (!isChecked) {
+      return;
+    }
+
+    if (user) {
+      navigate('/profile');
+      return;
+    }
+
     const processActivation = async () => {
       try {
-        await logout();
+        // await logout();
         await activate(activationToken);
+        navigate('/profile');
       } catch (error) {
         setError(error.response?.data?.message || `Wrong activation link`);
       } finally {
@@ -24,7 +40,7 @@ export const AccountActivationPage = () => {
     };
 
     processActivation();
-  }, [activationToken]);
+  }, [activationToken, isChecked, user, logout, activate]);
 
   if (!done) {
     return <Loader />;

@@ -8,7 +8,7 @@ httpClient.interceptors.request.use(onRequest);
 httpClient.interceptors.response.use(onResponseSuccess, onResponseError);
 
 function onRequest(request) {
-  const accessToken = localStorage.getItem('accessToken');
+  const accessToken = accessTokenService.get();
 
   if (accessToken) {
     request.headers['Authorization'] = `Bearer ${accessToken}`;
@@ -24,7 +24,9 @@ function onResponseSuccess(res) {
 async function onResponseError(error) {
   const originalRequest = error.config;
 
-  if (error.response.status !== 401 || originalRequest._retry) {
+  if (!originalRequest) throw error;
+
+  if (!error.response || error.response.status !== 401 || originalRequest._retry) {
     throw error;
   }
 
@@ -37,6 +39,6 @@ async function onResponseError(error) {
 
     return httpClient.request(originalRequest);
   } catch (error) {
-    throw error;
+    Promise.reject(error);
   }
 }

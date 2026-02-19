@@ -1,7 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { Formik, Form, Field } from 'formik';
 import { AuthContext } from '../components/AuthContext.jsx';
-import cn from 'classnames';
 import { userService } from '../services/userService.js';
 
 export const ProfilePage = () => {
@@ -18,6 +17,7 @@ export const ProfilePage = () => {
       setNameMsg('Name updated successfully!');
     } catch (err) {
       const errorMsg = err.response?.data?.message || 'Failed to update name';
+      setNameMsg(errorMsg);
     }
   };
 
@@ -34,8 +34,10 @@ export const ProfilePage = () => {
     } catch (err) {
       const backendMsg = err.response?.data?.message;
 
-      if (backendMsg && (backendMsg.includes('old password')) || backendMsg.includes('at least')) {
+      if (backendMsg && backendMsg.includes('old password')) {
         setErrors({ oldPassword: backendMsg });
+      } else if (backendMsg &&  backendMsg.includes('at least')) {
+        setErrors({ newPassword: backendMsg });
       } else {
         setErrors({ oldPassword: 'Failed to update password' });
       }

@@ -69,21 +69,19 @@ export const RegistrationPage = () => {
               setRegistered(true);
             })
             .catch(error => {
-              if (error.message) {
+              const serverMessage = error.response?.data?.message;
+              const errors = error.response?.data?.errors;
+
+              if (serverMessage) {
+                setError(serverMessage);
+              } else if (error.message) {
                 setError(error.message);
               }
 
-              if (!error.response?.data) {
-                return;
-              }
-
-              const { errors, message } = error.response.data;
-
-              formikHelpers.setFieldError('email', errors?.email);
-              formikHelpers.setFieldError('password', errors?.password);
-
-              if (message) {
-                setError(message);
+              if (errors) {
+                formikHelpers.setFieldError('email', errors.email);
+                formikHelpers.setFieldError('password', errors.password);
+                formikHelpers.setFieldError('name', errors.name);
               }
             })
             .finally(() => {
@@ -197,7 +195,7 @@ export const RegistrationPage = () => {
                 className={cn('button is-success has-text-weight-bold', {
                   'is-loading': isSubmitting,
                 })}
-                disabled={isSubmitting || errors.email || errors.password}
+                disabled={isSubmitting || errors.name || errors.email || errors.password}
               >
                 Sign up
               </button>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-export const usePageError = initialError => {
+export const usePageError = (initialError = '') => {
   const [error, setError] = useState(initialError);
 
   useEffect(() => {
